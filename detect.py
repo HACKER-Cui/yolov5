@@ -158,7 +158,15 @@ def run(
                     s += f"{n} {names[int(c)]}{'s' * (n > 1)}, "  # add to string
 
                 # Write results
+                piccount=0
                 for *xyxy, conf, cls in reversed(det):
+                    
+                    x1, y1, x2, y2 = [int(coord) for coord in xyxy]
+                    corners = [(x1, y1), (x2, y1), (x2, y2), (x1, y2)]
+                    print(f"picture:{piccount} name:{names[int(cls)]} x:{(x1+x2)//2} y:{(y1+y2)//2}")
+                    
+
+                    piccount+=1
                     if save_txt:  # Write to file
                         xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
                         line = (cls, *xywh, conf) if save_conf else (cls, *xywh)  # label format
@@ -216,8 +224,9 @@ def run(
 
 def parse_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'runs/train/exp8/weights/best.pt', help='model path or triton URL')
+    parser.add_argument('--weights', nargs='+', type=str, default=ROOT / 'runs/train/exp14/weights/best.pt', help='model path or triton URL')
     parser.add_argument('--source', type=str, default=ROOT / 'mydata/images/train', help='file/dir/URL/glob/screen/0(webcam)')
+    #parser.add_argument('--source', type=str, default=ROOT / '0', help='file/dir/URL/glob/screen/0(webcam)')
     parser.add_argument('--data', type=str, default=ROOT / 'data/mydata.yaml', help='(optional) dataset.yaml path')
     parser.add_argument('--imgsz', '--img', '--img-size', nargs='+', type=int, default=[640], help='inference size h,w')
     parser.add_argument('--conf-thres', type=float, default=0.25, help='confidence threshold')
